@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlokBuild Pro — Bikin Website Tanpa Coding dalam Hitungan Menit</title>
+<meta name="description" content="HTML Builder lengkap dengan AI, drag & drop, SEO, multi-halaman, dan integrasi WhatsApp. Buat website profesional tanpa coding. Sekali beli, pakai selamanya.">
+<meta property="og:title" content="BlokBuild Pro — Bikin Website Tanpa Coding">
+<meta property="og:description" content="HTML Builder bertenaga AI. Drag & drop, SEO, multi-halaman, WhatsApp order. Sekali beli pakai selamanya.">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16140f;--paper:#faf6ee;--panel:#fffdf8;
+    --accent:#d4622a;--accent-dk:#a8431a;--accent-soft:#fbe9dd;
+    --line:#e6ddcd;--muted:#7d7468;--ok:#3c8c5c;--gold:#c9a14a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;overflow-x:hidden;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  a{text-decoration:none;color:inherit;}
+  .btn{display:inline-block;padding:15px 32px;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;border:none;font-family:inherit;transition:.18s;}
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 8px 24px -8px var(--accent);}
+  .btn-primary:hover{background:var(--accent-dk);transform:translateY(-2px);}
+  .btn-ghost{background:transparent;border:1.5px solid var(--ink);color:var(--ink);}
+  .btn-ghost:hover{background:var(--ink);color:var(--paper);}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:100;background:rgba(250,246,238,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex;align-items:center;height:64px;gap:20px;}
+  .logo{font-family:'Fraunces',serif;font-weight:700;font-size:22px;display:flex;align-items:center;gap:9px;}
+  .logo .dot{width:13px;height:13px;background:var(--accent);border-radius:3px;transform:rotate(12deg);}
+  nav .links{margin-left:auto;display:flex;gap:26px;align-items:center;}
+  nav .links a{font-size:14px;font-weight:500;color:var(--muted);}
+  nav .links a:hover{color:var(--ink);}
+  nav .btn{padding:10px 20px;font-size:14px;}
+  @media(max-width:760px){nav .links a:not(.btn){display:none;}}
+
+  /* HERO */
+  .hero{padding:80px 0 70px;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:680px;height:680px;background:radial-gradient(circle,var(--accent-soft) 0%,transparent 65%);z-index:0;}
+  .hero>*{position:relative;z-index:1;}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent-dk);padding:7px 16px;border-radius:99px;font-size:13px;font-weight:600;margin-bottom:22px;border:1px solid #f0d4c2;}
+  .hero h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(36px,6vw,62px);line-height:1.05;letter-spacing:-1.5px;margin-bottom:20px;}
+  .hero h1 .hl{color:var(--accent);position:relative;}
+  .hero h1 .hl::after{content:'';position:absolute;left:0;bottom:6px;width:100%;height:12px;background:var(--gold);opacity:.28;z-index:-1;border-radius:4px;}
+  .hero p.lead{font-size:clamp(16px,2.2vw,20px);color:var(--muted);max-width:620px;margin:0 auto 32px;}
+  .hero .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .hero .trust{margin-top:24px;font-size:13px;color:var(--muted);}
+  .hero .trust b{color:var(--ink);}
+
+  /* MOCKUP */
+  .mockup{margin:48px auto 0;max-width:860px;background:var(--ink);border-radius:16px;padding:10px;box-shadow:0 40px 80px -30px rgba(80,50,20,.45);position:relative;z-index:1;}
+  .mockup .bar{display:flex;gap:6px;padding:8px 10px;}
+  .mockup .bar span{width:11px;height:11px;border-radius:50%;background:#4a443c;}
+  .mockup .bar span:first-child{background:#e0542f;}
+  .mockup .screen{background:#efe8da;border-radius:8px;height:340px;display:grid;grid-template-columns:140px 1fr 130px;overflow:hidden;}
+  .mk-side{background:#fffdf8;border-right:1px solid var(--line);padding:12px;}
+  .mk-side .b{height:26px;background:var(--accent-soft);border-radius:6px;margin-bottom:7px;}
+  .mk-side .b:nth-child(even){background:#f0ece2;}
+  .mk-canvas{padding:16px;overflow:hidden;}
+  .mk-hero{background:var(--ink);border-radius:8px;height:90px;margin-bottom:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+  .mk-hero i{display:block;width:120px;height:11px;background:#faf6ee;border-radius:3px;}
+  .mk-hero i.s{width:80px;height:7px;opacity:.6;}
+  .mk-hero i.btn{width:60px;height:16px;background:var(--accent);border-radius:4px;margin-top:3px;}
+  .mk-row{display:flex;gap:8px;margin-bottom:10px;}
+  .mk-row .c{flex:1;background:#fffdf8;border-radius:6px;height:60px;border:1px solid var(--line);}
+  .mk-side.r{border-right:none;border-left:1px solid var(--line);}
+  .mk-field{height:32px;background:#faf6ee;border:1px solid var(--line);border-radius:5px;margin-bottom:7px;}
+
+  /* SECTIONS */
+  section{padding:72px 0;}
+  .sec-head{text-align:center;max-width:620px;margin:0 auto 48px;}
+  .sec-head .tag{color:var(--accent);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+  .sec-head h2{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1.1;letter-spacing:-1px;margin-bottom:12px;}
+  .sec-head p{color:var(--muted);font-size:16px;}
+
+  /* PROBLEM */
+  .problem{background:var(--ink);color:var(--paper);}
+  .problem .sec-head h2{color:var(--paper);}
+  .problem .sec-head p{color:#bdb5a6;}
+  .prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;}
+  .prob-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:26px;}
+  .prob-card .x{font-size:28px;margin-bottom:12px;}
+  .prob-card h3{font-size:17px;margin-bottom:8px;}
+  .prob-card p{color:#bdb5a6;font-size:14px;}
+
+  /* FEATURES */
+  .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;}
+  .feat-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px;transition:.18s;}
+  .feat-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px -20px rgba(80,50,20,.3);border-color:var(--accent);}
+  .feat-card .ic{width:52px;height:52px;background:var(--accent-soft);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:16px;}
+  .feat-card h3{font-size:19px;margin-bottom:8px;font-family:'Fraunces',serif;}
+  .feat-card p{color:var(--muted);font-size:14.5px;}
+
+  /* AI HIGHLIGHT */
+  .ai{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dk) 100%);color:#fff;border-radius:20px;padding:48px;display:flex;gap:40px;align-items:center;flex-wrap:wrap;}
+  .ai .txt{flex:1;min-width:280px;}
+  .ai .tag{color:#ffe;opacity:.85;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1.5px;}
+  .ai h2{font-family:'Fraunces',serif;font-size:34px;margin:10px 0 14px;line-height:1.1;}
+  .ai p{opacity:.92;font-size:16px;margin-bottom:22px;}
+  .ai .demo{flex:1;min-width:280px;background:rgba(0,0,0,.25);border-radius:14px;padding:22px;font-family:'SF Mono',Menlo,monospace;font-size:13px;}
+  .ai .demo .prompt{color:#ffd9a0;margin-bottom:14px;}
+  .ai .demo .arrow{text-align:center;font-size:20px;margin:10px 0;opacity:.6;}
+  .ai .demo .out{background:rgba(255,255,255,.1);border-radius:8px;padding:12px;line-height:1.9;}
+
+  /* WHO */
+  .who-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;}
+  .who-card{text-align:center;padding:24px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;}
+  .who-card .e{font-size:36px;margin-bottom:10px;}
+  .who-card h4{font-size:15px;margin-bottom:4px;}
+  .who-card p{font-size:12.5px;color:var(--muted);}
+
+  /* PRICING */
+  .pricing{background:var(--accent-soft);}
+  .price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:860px;margin:0 auto;}
+  .price-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:34px;position:relative;}
+  .price-card.featured{border:2px solid var(--accent);box-shadow:0 20px 50px -24px var(--accent);}
+  .price-card .pop{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:5px 16px;border-radius:99px;font-size:12px;font-weight:700;}
+  .price-card h3{font-size:20px;margin-bottom:4px;}
+  .price-card .desc{color:var(--muted);font-size:13px;margin-bottom:18px;}
+  .price-card .price{font-family:'Fraunces',serif;font-size:42px;font-weight:700;color:var(--accent);line-height:1;}
+  .price-card .price small{font-size:15px;color:var(--muted);font-weight:400;}
+  .price-card .once{font-size:12px;color:var(--ok);font-weight:600;margin-top:4px;}
+  .price-card ul{list-style:none;margin:20px 0;}
+  .price-card li{padding:7px 0;font-size:14px;display:flex;gap:9px;align-items:flex-start;}
+  .price-card li::before{content:'✓';color:var(--ok);font-weight:700;flex-shrink:0;}
+  .price-card li.no{color:var(--muted);}
+  .price-card li.no::before{content:'—';color:var(--muted);}
+  .price-card .btn{width:100%;text-align:center;margin-top:8px;}
+
+  /* FAQ */
+  .faq-list{max-width:720px;margin:0 auto;}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;padding:18px 22px;}
+  details summary{font-weight:600;cursor:pointer;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center;}
+  details summary::after{content:'+';font-size:22px;color:var(--accent);font-weight:300;}
+  details[open] summary::after{content:'−';}
+  details p{margin-top:12px;color:var(--muted);font-size:14.5px;}
+
+  /* FINAL CTA */
+  .final{background:var(--ink);color:var(--paper);text-align:center;border-radius:24px;padding:60px 30px;margin:0 24px;}
+  .final h2{font-family:'Fraunces',serif;font-size:clamp(28px,4.5vw,44px);margin-bottom:14px;line-height:1.1;}
+  .final p{color:#bdb5a6;font-size:17px;margin-bottom:28px;max-width:520px;margin-left:auto;margin-right:auto;}
+
+  footer{padding:40px 0;text-align:center;color:var(--muted);font-size:13px;}
+  footer .logo{justify-content:center;margin-bottom:10px;font-size:18px;color:var(--ink);}
+
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.in{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>BlokBuild<span style="font-size:11px;background:var(--accent);color:#fff;padding:2px 7px;border-radius:5px;font-family:'Outfit';font-weight:700;">PRO</span></div>
+    <div class="links">
+      <a href="#fitur">Fitur</a>
+      <a href="#cara">Cara Kerja</a>
+      <a href="#harga">Harga</a>
+      <a href="#faq">FAQ</a>
+      <a href="#harga" class="btn btn-primary">Beli Sekarang</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <span class="badge">✨ Ditenagai AI · Tanpa Coding · Sekali Beli Selamanya</span>
+    <h1>Bikin Website Profesional<br>dalam <span class="hl">Hitungan Menit</span></h1>
+    <p class="lead">BlokBuild Pro adalah pembuat website drag & drop bertenaga AI. Cukup ketik ide Anda, atau susun sendiri dengan blok siap pakai — langsung jadi file HTML yang bisa di-hosting di mana saja.</p>
+    <div class="cta-row">
+      <a href="#harga" class="btn btn-primary">🚀 Mulai Sekarang</a>
+      <a href="#cara" class="btn btn-ghost">Lihat Cara Kerja</a>
+    </div>
+    <div class="trust">⭐⭐⭐⭐⭐ Dipakai pelaku usaha & freelancer · <b>Tanpa biaya bulanan</b></div>
+
+    <div class="mockup">
+      <div class="bar"><span></span><span></span><span></span></div>
+      <div class="screen">
+        <div class="mk-side"><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div></div>
+        <div class="mk-canvas">
+          <div class="mk-hero"><i></i><i class="s"></i><i class="btn"></i></div>
+          <div class="mk-row"><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          <div class="mk-row"><div class="c"></div><div class="c"></div></div>
+        </div>
+        <div class="mk-side r"><div class="mk-field"></div><div class="mk-field"></div><div class="mk-field"></div><div class="mk-field"></div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="tag" style="color:#f0a575;">Kenapa BlokBuild?</div>
+      <h2>Bikin website itu ribet & mahal?</h2>
+      <p>Tidak lagi. BlokBuild menyelesaikan masalah yang bikin orang menyerah bikin website sendiri.</p>
+    </div>
+    <div class="prob-grid">
+      <div class="prob-card reveal"><div class="x">💸</div><h3>Biaya bulanan mencekik</h3><p>Builder lain tarik langganan tiap bulan selamanya. BlokBuild: sekali beli, pakai terus.</p></div>
+      <div class="prob-card reveal"><div class="x">😵</div><h3>Coding bikin pusing</h3><p>Tak perlu paham HTML/CSS. Drag, drop, klik — selesai. Atau biar AI yang susun.</p></div>
+      <div class="prob-card reveal"><div class="x">🔒</div><h3>Terkunci di satu platform</h3><p>Hasil BlokBuild adalah file HTML murni milik Anda. Hosting di mana saja, bebas.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="fitur">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="tag">Fitur Lengkap</div>
+      <h2>Semua yang Anda butuhkan, dalam satu aplikasi</h2>
+      <p>26 jenis blok, AI, SEO, multi-halaman, sampai integrasi WhatsApp & database.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal"><div class="ic">✨</div><h3>AI Generate</h3><p>Ketik ide website Anda, AI menyusun halaman lengkap otomatis — bekerja tanpa internet.</p></div>
+      <div class="feat-card reveal"><div class="ic">🧱</div><h3>26 Blok Siap Pakai</h3><p>Hero, fitur, harga, testimoni, galeri, FAQ, booking, dan banyak lagi. Tinggal tarik.</p></div>
+      <div class="feat-card reveal"><div class="ic">🔍</div><h3>SEO & Meta Otomatis</h3><p>Open Graph, favicon, Google Analytics — website mudah ditemukan di Google.</p></div>
+      <div class="feat-card reveal"><div class="ic">🛒</div><h3>Order via WhatsApp</h3><p>Pelanggan pilih produk, klik, langsung masuk ke WhatsApp Anda. Cocok untuk UMKM.</p></div>
+      <div class="feat-card reveal"><div class="ic">📅</div><h3>Booking & Reservasi</h3><p>Form reservasi untuk jasa, klinik, salon, atau restoran — terhubung ke WhatsApp.</p></div>
+      <div class="feat-card reveal"><div class="ic">🗄️</div><h3>Form ke Database</h3><p>Kumpulkan data pendaftaran langsung ke Supabase tanpa server tambahan.</p></div>
+      <div class="feat-card reveal"><div class="ic">📄</div><h3>Multi-Halaman</h3><p>Buat banyak halaman dengan navigasi otomatis. Export jadi satu paket ZIP siap hosting.</p></div>
+      <div class="feat-card reveal"><div class="ic">🎨</div><h3>Tema & Dark Mode</h3><p>6 tema warna, mode gelap, dan animasi scroll yang halus untuk tampilan profesional.</p></div>
+      <div class="feat-card reveal"><div class="ic">💾</div><h3>Simpan & Lanjutkan</h3><p>Simpan project, lanjutkan kapan saja, atau backup ke file. Kerja Anda aman.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- AI HIGHLIGHT -->
+<section id="cara">
+  <div class="wrap">
+    <div class="ai reveal">
+      <div class="txt">
+        <div class="tag">Fitur Andalan</div>
+        <h2>Cukup ketik, AI yang kerjakan</h2>
+        <p>Tidak punya ide desain? Tulis saja apa yang Anda mau dalam bahasa biasa. AI BlokBuild langsung menyusun struktur halaman, warna, dan konten yang sesuai.</p>
+        <a href="#harga" class="btn" style="background:#fff;color:var(--accent-dk);">Coba Sekarang →</a>
+      </div>
+      <div class="demo">
+        <div class="prompt">💬 "buat landing page untuk cafe Kopi Senja yang jual kopi premium"</div>
+        <div class="arrow">↓ ✨</div>
+        <div class="out">✓ Hero "Kopi Senja"<br>✓ Tema warna kopi<br>✓ Galeri produk<br>✓ Daftar harga<br>✓ Testimoni + FAQ<br>✓ Form WhatsApp<br>✓ SEO terisi otomatis</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="tag">Untuk Siapa</div>
+      <h2>Cocok untuk Anda yang...</h2>
+    </div>
+    <div class="who-grid">
+      <div class="who-card reveal"><div class="e">🏪</div><h4>Pemilik UMKM</h4><p>Toko online, katalog, order WhatsApp</p></div>
+      <div class="who-card reveal"><div class="e">💼</div><h4>Freelancer</h4><p>Bikin website klien lebih cepat</p></div>
+      <div class="who-card reveal"><div class="e">🎓</div><h4>Pelajar & Guru</h4><p>Portfolio, tugas, halaman acara</p></div>
+      <div class="who-card reveal"><div class="e">🕌</div><h4>Organisasi</h4><p>Profil, pendaftaran, undangan</p></div>
+      <div class="who-card reveal"><div class="e">🚀</div><h4>Startup</h4><p>Landing page produk yang cepat</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="harga" class="pricing">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="tag">Harga</div>
+      <h2>Sekali beli, pakai selamanya</h2>
+      <p>Tanpa langganan. Tanpa biaya tersembunyi. Bayar sekali, miliki seterusnya.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card reveal">
+        <h3>Personal</h3>
+        <div class="desc">Untuk kebutuhan pribadi</div>
+        <div class="price">Rp 99rb<small></small></div>
+        <div class="once">✓ Bayar sekali</div>
+        <ul>
+          <li>Semua 26 blok</li>
+          <li>AI Generate</li>
+          <li>SEO & Meta tools</li>
+          <li>Export HTML & ZIP</li>
+          <li class="no">Lisensi komersial</li>
+          <li class="no">Update prioritas</li>
+        </ul>
+        <a href="#kontak" class="btn btn-ghost">Pilih Personal</a>
+      </div>
+      <div class="price-card featured reveal">
+        <div class="pop">PALING LARIS</div>
+        <h3>Bisnis</h3>
+        <div class="desc">Untuk usaha & freelancer</div>
+        <div class="price">Rp 249rb<small></small></div>
+        <div class="once">✓ Bayar sekali</div>
+        <ul>
+          <li>Semua fitur Personal</li>
+          <li><b>Lisensi komersial</b> (boleh untuk klien)</li>
+          <li>Multi-halaman + ZIP</li>
+          <li>Form ke Database (Supabase)</li>
+          <li>Booking & WhatsApp order</li>
+          <li>Update gratis selamanya</li>
+        </ul>
+        <a href="#kontak" class="btn btn-primary">Pilih Bisnis</a>
+      </div>
+      <div class="price-card reveal">
+        <h3>Agency</h3>
+        <div class="desc">Untuk pemakaian skala besar</div>
+        <div class="price">Rp 599rb<small></small></div>
+        <div class="once">✓ Bayar sekali</div>
+        <ul>
+          <li>Semua fitur Bisnis</li>
+          <li>Lisensi tanpa batas project</li>
+          <li>Boleh rebranding</li>
+          <li>Dukungan prioritas</li>
+          <li>Konsultasi setup</li>
+          <li>Update gratis selamanya</li>
+        </ul>
+        <a href="#kontak" class="btn btn-ghost">Pilih Agency</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="tag">FAQ</div>
+      <h2>Pertanyaan yang sering ditanya</h2>
+    </div>
+    <div class="faq-list">
+      <details class="reveal"><summary>Apakah saya perlu bisa coding?</summary><p>Tidak sama sekali. BlokBuild dirancang untuk semua kalangan. Cukup drag & drop, atau ketik ide Anda dan biarkan AI yang menyusun.</p></details>
+      <details class="reveal"><summary>Apakah ada biaya bulanan?</summary><p>Tidak. Anda bayar sekali dan memiliki aplikasinya selamanya, termasuk update gratis (paket Bisnis & Agency).</p></details>
+      <details class="reveal"><summary>Di mana saya bisa hosting hasilnya?</summary><p>Di mana saja. Hasil BlokBuild adalah file HTML murni — bisa diupload ke GitHub Pages, Netlify, cPanel, atau hosting apa pun. Bahkan banyak yang gratis.</p></details>
+      <details class="reveal"><summary>Apakah butuh internet untuk memakainya?</summary><p>Tidak. Aplikasi berjalan langsung di browser Anda secara offline. Hanya fitur opsional seperti peta & font online yang butuh internet.</p></details>
+      <details class="reveal"><summary>Apakah AI-nya butuh biaya tambahan?</summary><p>Tidak. AI Generate berjalan offline di dalam aplikasi — tanpa kuota, tanpa biaya per pemakaian.</p></details>
+      <details class="reveal"><summary>Bisakah saya pakai untuk membuat website klien?</summary><p>Bisa, dengan paket Bisnis atau Agency yang menyertakan lisensi komersial.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="kontak">
+  <div class="final reveal">
+    <h2>Siap bikin website pertama Anda?</h2>
+    <p>Bergabung dengan pelaku usaha & freelancer yang sudah berhenti membayar langganan mahal. Mulai sekarang.</p>
+    <a href="https://wa.me/628123456789?text=Halo,%20saya%20mau%20beli%20BlokBuild%20Pro" class="btn btn-primary" style="background:var(--accent);">💬 Pesan via WhatsApp</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>BlokBuild Pro</div>
+    <p>© 2026 BlokBuild. Bikin website tanpa coding.</p>
+    <p style="margin-top:6px;font-size:12px;">Ganti nomor WhatsApp & harga di file ini sebelum dipublikasikan.</p>
+  </div>
+</footer>
+
+<script>
+  // animasi scroll reveal
+  const els=document.querySelectorAll('.reveal');
+  if('IntersectionObserver'in window){
+    const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target);}});},{threshold:.12});
+    els.forEach(el=>o.observe(el));
+  }else{els.forEach(el=>el.classList.add('in'));}
+</script>
+</body>
+</html>

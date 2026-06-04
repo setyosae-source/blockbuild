@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlokBuild Pro — Panduan & Tutorial</title>
+<meta name="description" content="Panduan lengkap memakai BlokBuild Pro: aktivasi, AI Generate, blok, SEO, multi-halaman, export, dan hosting.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#16140f;--paper:#faf6ee;--panel:#fffdf8;--accent:#d4622a;--accent-dk:#a8431a;--accent-soft:#fbe9dd;--line:#e6ddcd;--muted:#7d7468;--ok:#3c8c5c;--code:#2a2419;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;font-size:15px;}
+  a{color:var(--accent);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh;}
+
+  /* SIDEBAR */
+  .side{background:var(--panel);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow-y:auto;padding:22px 18px;}
+  .side .logo{font-family:'Fraunces',serif;font-weight:700;font-size:20px;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .side .logo .dot{width:11px;height:11px;background:var(--accent);border-radius:3px;transform:rotate(12deg);}
+  .side .logo .pro{font-size:9px;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px;font-weight:700;}
+  .side .ver{font-size:12px;color:var(--muted);margin-bottom:20px;}
+  .side nav a{display:block;padding:8px 12px;border-radius:8px;color:var(--muted);font-size:14px;font-weight:500;margin-bottom:2px;}
+  .side nav a:hover{background:var(--accent-soft);color:var(--accent-dk);text-decoration:none;}
+  .side nav a.active{background:var(--accent);color:#fff;}
+  .side nav .grp{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:16px 0 6px;font-weight:700;padding:0 12px;}
+
+  /* CONTENT */
+  .content{padding:48px 56px;max-width:840px;}
+  .content h1{font-family:'Fraunces',serif;font-size:38px;letter-spacing:-1px;margin-bottom:8px;}
+  .content .intro{color:var(--muted);font-size:17px;margin-bottom:36px;}
+  .doc-sec{margin-bottom:48px;scroll-margin-top:24px;}
+  .doc-sec h2{font-family:'Fraunces',serif;font-size:26px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--accent-soft);}
+  .doc-sec h3{font-size:18px;margin:22px 0 8px;}
+  .doc-sec p{margin-bottom:12px;}
+  .doc-sec ul,.doc-sec ol{margin:0 0 14px 22px;}
+  .doc-sec li{margin-bottom:7px;}
+  .step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+  .step .n{flex-shrink:0;width:28px;height:28px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+  .step .t{flex:1;}
+  .step .t b{display:block;margin-bottom:2px;}
+  .step .t span{color:var(--muted);font-size:14px;}
+  code{background:var(--accent-soft);color:var(--accent-dk);padding:2px 7px;border-radius:5px;font-family:'SF Mono',Menlo,monospace;font-size:13px;}
+  pre{background:var(--code);color:#e8e0d0;padding:16px;border-radius:10px;overflow-x:auto;font-family:'SF Mono',Menlo,monospace;font-size:13px;line-height:1.6;margin-bottom:16px;}
+  .callout{border-radius:10px;padding:14px 18px;margin:16px 0;font-size:14px;line-height:1.6;}
+  .callout.tip{background:#e7f3ec;border-left:4px solid var(--ok);}
+  .callout.warn{background:var(--accent-soft);border-left:4px solid var(--accent);color:#7a4220;}
+  .callout b{font-weight:700;}
+  table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);}
+  th{background:var(--accent-soft);font-size:12px;text-transform:uppercase;letter-spacing:.5px;}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent-dk);padding:2px 9px;border-radius:6px;font-size:12px;font-weight:600;}
+
+  .menu-toggle{display:none;}
+  @media(max-width:860px){
+    .layout{grid-template-columns:1fr;}
+    .side{position:fixed;left:-280px;width:260px;z-index:100;transition:.25s;box-shadow:0 0 40px rgba(0,0,0,.2);}
+    .side.open{left:0;}
+    .content{padding:24px;}
+    .menu-toggle{display:flex;position:fixed;top:14px;right:14px;z-index:101;width:46px;height:46px;border-radius:12px;background:var(--accent);color:#fff;border:none;font-size:20px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.2);}
+  }
+</style>
+</head>
+<body>
+<button class="menu-toggle" onclick="document.querySelector('.side').classList.toggle('open')">☰</button>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="logo"><span class="dot"></span>BlokBuild <span class="pro">PRO</span></div>
+    <div class="ver">Panduan v3 · 2026</div>
+    <nav>
+      <a href="#mulai" class="active">🚀 Mulai Cepat</a>
+      <a href="#aktivasi">🔑 Aktivasi Lisensi</a>
+      <div class="grp">Membangun</div>
+      <a href="#ai">✨ AI Generate</a>
+      <a href="#blok">🧱 Bekerja dengan Blok</a>
+      <a href="#edit">✏️ Edit Properti</a>
+      <a href="#advanced">⚙️ Mode Advanced</a>
+      <a href="#halaman">📄 Multi-Halaman</a>
+      <div class="grp">Pengaturan</div>
+      <a href="#seo">🔍 SEO & Meta</a>
+      <a href="#tampilan">🎨 Tema & Efek</a>
+      <a href="#supabase">🗄️ Form ke Database</a>
+      <a href="#whatsapp">🛒 Order WhatsApp</a>
+      <div class="grp">Selesai</div>
+      <a href="#export">⬇️ Export & Simpan</a>
+      <a href="#hosting">🌐 Hosting Website</a>
+      <a href="#faq">❓ Masalah Umum</a>
+    </nav>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+    <h1>Panduan BlokBuild Pro</h1>
+    <p class="intro">Semua yang perlu Anda tahu untuk membuat website profesional tanpa coding. Ikuti dari atas, atau lompat ke topik yang Anda butuhkan lewat menu kiri.</p>
+
+    <section class="doc-sec" id="mulai">
+      <h2>🚀 Mulai Cepat</h2>
+      <p>Membuat website pertama Anda hanya butuh 3 menit:</p>
+      <div class="step"><div class="n">1</div><div class="t"><b>Buka aplikasi</b><span>Klik dua kali file <code>BlokBuild-Pro.html</code> — akan terbuka di browser (Chrome, Edge, atau Firefox).</span></div></div>
+      <div class="step"><div class="n">2</div><div class="t"><b>Masukkan kunci lisensi</b><span>Ketik kunci yang Anda terima, lalu klik Aktifkan.</span></div></div>
+      <div class="step"><div class="n">3</div><div class="t"><b>Pilih cara mulai</b><span>Klik <span class="badge">✨ AI Generate</span> dan ketik ide Anda, atau <span class="badge">📑 Template</span> untuk desain siap pakai, atau tarik blok manual dari kiri.</span></div></div>
+      <div class="step"><div class="n">4</div><div class="t"><b>Edit & download</b><span>Klik blok untuk mengubah teks/warna, lalu klik <span class="badge">⬇️ Download</span> untuk dapat file HTML siap pakai.</span></div></div>
+      <div class="callout tip">💡 <b>Tips:</b> Tidak perlu internet untuk memakai aplikasi. Semua berjalan di browser Anda.</div>
+    </section>
+
+    <section class="doc-sec" id="aktivasi">
+      <h2>🔑 Aktivasi Lisensi</h2>
+      <p>Saat pertama membuka aplikasi, akan muncul layar kunci. Masukkan kunci lisensi Anda dan klik <b>Aktifkan</b>. Kunci hanya perlu dimasukkan sekali per browser — selanjutnya aplikasi langsung terbuka.</p>
+      <div class="callout warn">⚠️ Jika kunci ditolak, pastikan tidak ada spasi di awal/akhir dan huruf ditulis kapital. Hubungi penjual jika masih bermasalah.</div>
+    </section>
+
+    <section class="doc-sec" id="ai">
+      <h2>✨ AI Generate</h2>
+      <p>Fitur andalan BlokBuild. Cukup tuliskan ide website Anda dalam bahasa biasa, AI akan menyusun halaman lengkap otomatis — termasuk warna, struktur, dan konten awal.</p>
+      <div class="step"><div class="n">1</div><div class="t"><b>Klik tombol ✨ AI Generate</b></div></div>
+      <div class="step"><div class="n">2</div><div class="t"><b>Tulis ide Anda</b><span>Contoh: <i>"buat landing page untuk cafe Kopi Senja yang jual kopi premium dan suasana cozy"</i></span></div></div>
+      <div class="step"><div class="n">3</div><div class="t"><b>Klik Buat Sekarang</b><span>AI menyusun hero, fitur, galeri, harga, FAQ, form, dan footer sesuai jenis usaha Anda.</span></div></div>
+      <p>AI mengenali berbagai jenis usaha (cafe, toko, jasa, klinik, fashion, properti, edukasi) dan menyesuaikan tema warna otomatis. Setelah dibuat, Anda tetap bisa edit setiap blok.</p>
+      <div class="callout tip">💡 Semakin spesifik ide Anda, semakin tepat hasilnya. Sebutkan jenis usaha + nama + ciri khasnya.</div>
+    </section>
+
+    <section class="doc-sec" id="blok">
+      <h2>🧱 Bekerja dengan Blok</h2>
+      <p>Website dibangun dari "blok" — potongan siap pakai seperti Hero, Galeri, atau Form. Ada 26 jenis blok dalam 5 kategori.</p>
+      <h3>Menambah blok</h3>
+      <p>Tarik blok dari panel kiri ke kanvas tengah. Posisi sisip ditentukan oleh tempat Anda melepas.</p>
+      <h3>Mengatur blok</h3>
+      <p>Klik blok untuk memilihnya, lalu gunakan tombol di pojok kanan blok:</p>
+      <table>
+        <tr><th>Tombol</th><th>Fungsi</th></tr>
+        <tr><td>▲ ▼</td><td>Pindah blok naik / turun</td></tr>
+        <tr><td>⎘</td><td>Gandakan blok</td></tr>
+        <tr><td>✕</td><td>Hapus blok</td></tr>
+      </table>
+      <div class="callout tip">💡 Tekan <code>Ctrl+Z</code> untuk membatalkan, <code>Ctrl+Y</code> untuk mengulang. Tombol <code>Delete</code> menghapus blok terpilih.</div>
+    </section>
+
+    <section class="doc-sec" id="edit">
+      <h2>✏️ Edit Properti</h2>
+      <p>Setelah memilih blok, panel kanan menampilkan semua properti yang bisa diubah: teks, warna, ukuran, perataan, dan link. Perubahan langsung terlihat di kanvas (WYSIWYG).</p>
+      <p>Untuk mengganti warna, klik kotak warna atau ketik kode hex langsung (misal <code>#d4622a</code>).</p>
+    </section>
+
+    <section class="doc-sec" id="advanced">
+      <h2>⚙️ Mode Advanced</h2>
+      <p>Untuk pengguna teknis. Di panel kanan, tab <b>Advanced</b> memungkinkan Anda menambahkan:</p>
+      <ul>
+        <li><b>ID Elemen</b> — untuk anchor link atau target JavaScript</li>
+        <li><b>Class CSS</b> — untuk styling lanjutan</li>
+        <li><b>Inline Style</b> — CSS tambahan langsung pada blok (misal <code>margin-top:40px; box-shadow:0 4px 12px #0002;</code>)</li>
+      </ul>
+      <div class="callout tip">💡 Pengguna awam bisa abaikan tab ini sepenuhnya — aplikasi tetap berfungsi penuh tanpanya.</div>
+    </section>
+
+    <section class="doc-sec" id="halaman">
+      <h2>📄 Multi-Halaman</h2>
+      <p>Buat website dengan banyak halaman (Beranda, Tentang, Kontak, dll). Tab halaman ada di atas kanvas.</p>
+      <ul>
+        <li><b>Tambah halaman:</b> klik tombol <code>＋</code> di bar tab</li>
+        <li><b>Ganti nama:</b> klik dua kali pada tab halaman</li>
+        <li><b>Hapus:</b> klik tanda <code>×</code> pada tab</li>
+      </ul>
+      <p>Saat di-export, setiap halaman jadi file HTML terpisah dengan <b>menu navigasi otomatis</b> yang menghubungkan semua halaman. Halaman pertama selalu menjadi <code>index.html</code>.</p>
+    </section>
+
+    <section class="doc-sec" id="seo">
+      <h2>🔍 SEO & Meta</h2>
+      <p>Agar website mudah ditemukan di Google dan tampil bagus saat dibagikan. Buka <span class="badge">⚙️ Pengaturan</span> dan isi bagian SEO:</p>
+      <ul>
+        <li><b>Deskripsi</b> — ringkasan website (ideal 150-160 karakter)</li>
+        <li><b>Kata kunci</b> — pisahkan dengan koma</li>
+        <li><b>Gambar Share (OG Image)</b> — gambar yang muncul saat link dibagikan di WhatsApp/Facebook (ukuran ideal 1200×630)</li>
+        <li><b>Favicon</b> — ikon kecil di tab browser</li>
+        <li><b>Google Analytics ID</b> — untuk melacak pengunjung (format <code>G-XXXXXXXXXX</code>)</li>
+      </ul>
+    </section>
+
+    <section class="doc-sec" id="tampilan">
+      <h2>🎨 Tema & Efek</h2>
+      <p>Di <span class="badge">⚙️ Pengaturan</span> bagian Tampilan:</p>
+      <ul>
+        <li><b>Tema Warna</b> — 6 pilihan (Oranye, Biru Laut, Hijau Hutan, Ungu, Pink, Hitam Putih). Mengubah seluruh skema warna sekaligus.</li>
+        <li><b>Animasi scroll</b> — blok muncul halus saat di-scroll</li>
+        <li><b>Tombol mode gelap</b> — pengunjung bisa beralih ke tampilan gelap</li>
+      </ul>
+    </section>
+
+    <section class="doc-sec" id="supabase">
+      <h2>🗄️ Form ke Database (Supabase)</h2>
+      <p>Blok <b>"Form → Supabase"</b> menyimpan data pengunjung langsung ke database gratis Supabase.</p>
+      <div class="step"><div class="n">1</div><div class="t"><b>Buat akun & project di Supabase</b><span>Gratis di supabase.com</span></div></div>
+      <div class="step"><div class="n">2</div><div class="t"><b>Buat tabel</b><span>Dengan kolom sesuai nama field di form Anda (misal: nama, email, no_hp)</span></div></div>
+      <div class="step"><div class="n">3</div><div class="t"><b>Aktifkan RLS Policy INSERT</b><span>Agar pengunjung bisa mengirim data (untuk anon)</span></div></div>
+      <div class="step"><div class="n">4</div><div class="t"><b>Isi koneksi di Pengaturan</b><span>Supabase URL, Anon Key, dan nama tabel</span></div></div>
+      <div class="callout warn">⚠️ Anon Key aman dipakai di website publik karena hanya berfungsi sesuai aturan RLS yang Anda tetapkan. Jangan gunakan service key.</div>
+    </section>
+
+    <section class="doc-sec" id="whatsapp">
+      <h2>🛒 Order via WhatsApp</h2>
+      <p>Dua blok khusus untuk usaha:</p>
+      <ul>
+        <li><b>Order via WhatsApp</b> — pengunjung pilih produk + jumlah, klik, pesanan langsung masuk ke WhatsApp Anda lengkap dengan total harga.</li>
+        <li><b>Booking / Reservasi</b> — form reservasi (nama, layanan, tanggal, jam) yang terkirim ke WhatsApp.</li>
+      </ul>
+      <p>Cukup isi <b>nomor WhatsApp</b> Anda dengan format <code>62</code> (misal <code>628123456789</code>) dan daftar produk dengan format <code>Nama|Harga</code>.</p>
+    </section>
+
+    <section class="doc-sec" id="export">
+      <h2>⬇️ Export & Simpan</h2>
+      <table>
+        <tr><th>Tombol</th><th>Hasil</th></tr>
+        <tr><td>⬇️ Download</td><td>1 file HTML halaman aktif</td></tr>
+        <tr><td>📦 ZIP</td><td>Semua halaman + README, siap upload hosting</td></tr>
+        <tr><td>&lt;/&gt; Kode</td><td>Lihat & salin kode HTML</td></tr>
+        <tr><td>💾 Simpan</td><td>Simpan project di browser (lanjutkan nanti)</td></tr>
+        <tr><td>📤 Export .json</td><td>Backup project ke file (pindah komputer)</td></tr>
+      </table>
+      <div class="callout tip">💡 Untuk website >1 halaman, selalu pakai <b>Export ZIP</b> agar navigasi antar halaman berfungsi.</div>
+    </section>
+
+    <section class="doc-sec" id="hosting">
+      <h2>🌐 Hosting Website (Gratis)</h2>
+      <p>Setelah download, website Anda perlu di-hosting agar bisa diakses publik. Pilihan gratis termudah:</p>
+      <h3>Cara tercepat: Netlify Drop</h3>
+      <ol>
+        <li>Buka <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a></li>
+        <li>Seret file HTML (atau isi folder ZIP yang sudah diekstrak) ke halaman tersebut</li>
+        <li>Selesai — Anda langsung dapat link website yang bisa dibagikan</li>
+      </ol>
+      <h3>Alternatif: GitHub Pages</h3>
+      <p>Upload file ke repository GitHub, aktifkan Pages di Settings. Cocok untuk yang sudah punya akun GitHub.</p>
+      <div class="callout tip">💡 Untuk domain sendiri (misal <code>tokosaya.com</code>), beli domain lalu hubungkan ke Netlify/GitHub Pages melalui pengaturan DNS.</div>
+    </section>
+
+    <section class="doc-sec" id="faq">
+      <h2>❓ Masalah Umum</h2>
+      <h3>Tombol/perubahan tidak muncul?</h3>
+      <p>Refresh browser (<code>Ctrl+Shift+R</code>) dan pastikan memakai file versi terbaru.</p>
+      <h3>Form Supabase tidak mengirim?</h3>
+      <p>Cek URL & Anon Key benar, nama tabel & kolom sesuai, dan RLS Policy INSERT sudah aktif.</p>
+      <h3>Project hilang setelah tutup browser?</h3>
+      <p>Project tersimpan di browser yang sama. Untuk backup permanen atau pindah komputer, gunakan <b>Export .json</b>.</p>
+      <h3>Peta/video tidak muncul?</h3>
+      <p>Kedua fitur ini butuh koneksi internet saat website dibuka pengunjung.</p>
+      <div class="callout tip">Butuh bantuan lebih lanjut? Hubungi penjual tempat Anda membeli BlokBuild Pro.</div>
+    </section>
+
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-top:40px;padding-top:24px;border-top:1px solid var(--line);">© 2026 BlokBuild Pro · Panduan Pengguna</p>
+  </main>
+</div>
+
+<script>
+  // highlight menu aktif saat scroll
+  const links=[...document.querySelectorAll('.side nav a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll(){
+    let cur=secs[0];
+    secs.forEach(s=>{if(s.getBoundingClientRect().top<=120)cur=s;});
+    links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur.id));
+  }
+  window.addEventListener('scroll',onScroll);onScroll();
+  // tutup sidebar mobile saat klik link
+  links.forEach(a=>a.addEventListener('click',()=>document.querySelector('.side').classList.remove('open')));
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlokBuild — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#16140f;--paper:#faf6ee;--panel:#fffdf8;--accent:#d4622a;--accent-soft:#fbe9dd;--line:#e6ddcd;--muted:#7d7468;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .demo-frame{width:100%;max-width:880px;}
+  .demo-cap{text-align:center;margin-bottom:18px;}
+  .demo-cap h2{font-family:'Fraunces',serif;font-size:26px;margin-bottom:4px;}
+  .demo-cap p{color:var(--muted);font-size:14px;}
+
+  .browser{background:var(--ink);border-radius:16px;padding:10px;box-shadow:0 40px 80px -30px rgba(80,50,20,.45);}
+  .browser .bar{display:flex;align-items:center;gap:6px;padding:6px 8px 10px;}
+  .browser .bar span{width:11px;height:11px;border-radius:50%;background:#4a443c;}
+  .browser .bar span:first-child{background:#e0542f;}
+  .browser .url{margin-left:10px;background:#2a2419;border-radius:6px;padding:4px 12px;font-size:11px;color:#9a9486;flex:1;font-family:monospace;}
+
+  .app{background:#efe8da;border-radius:9px;height:440px;display:grid;grid-template-columns:120px 1fr 120px;overflow:hidden;position:relative;}
+  .panel{background:var(--panel);padding:10px;overflow:hidden;}
+  .panel.r{border-left:1px solid var(--line);}
+  .panel.l{border-right:1px solid var(--line);}
+  .pi{height:24px;border-radius:5px;margin-bottom:6px;background:var(--accent-soft);display:flex;align-items:center;padding:0 8px;font-size:9px;font-weight:600;color:var(--accent);}
+  .pi.g{background:#f0ece2;color:var(--muted);}
+  .field-mini{height:22px;background:#faf6ee;border:1px solid var(--line);border-radius:4px;margin-bottom:6px;}
+
+  .canvas{background:#fff;margin:8px;border-radius:6px;overflow-y:auto;position:relative;}
+
+  /* blok yang muncul beranimasi */
+  .blk{opacity:0;transform:translateY(16px);transition:opacity .4s,transform .4s;}
+  .blk.show{opacity:1;transform:none;}
+  .b-hero{background:var(--ink);color:#fff;padding:24px 16px;text-align:center;}
+  .b-hero h3{font-size:18px;margin-bottom:6px;}
+  .b-hero p{font-size:10px;opacity:.8;margin-bottom:10px;}
+  .b-hero .btn{display:inline-block;background:var(--accent);color:#fff;padding:6px 16px;border-radius:5px;font-size:10px;font-weight:600;}
+  .b-feat{display:flex;gap:8px;padding:16px;}
+  .b-feat .c{flex:1;text-align:center;}
+  .b-feat .c .e{font-size:22px;}
+  .b-feat .c .l{height:6px;width:60%;margin:6px auto 3px;background:#ddd;border-radius:3px;}
+  .b-feat .c .l2{height:5px;width:80%;margin:0 auto;background:#eee;border-radius:3px;}
+  .b-gal{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:16px;}
+  .b-gal .g{height:48px;background:var(--accent-soft);border-radius:5px;}
+  .b-cta{background:var(--accent);color:#fff;padding:20px;text-align:center;}
+  .b-cta .h{height:9px;width:50%;margin:0 auto 8px;background:#fff;border-radius:4px;opacity:.9;}
+  .b-cta .btn{display:inline-block;background:#fff;color:var(--accent);padding:6px 18px;border-radius:5px;font-size:10px;font-weight:700;}
+  .b-foot{background:var(--ink);padding:16px;text-align:center;}
+  .b-foot .l{height:6px;width:40%;margin:0 auto;background:#5a544a;border-radius:3px;}
+
+  /* overlay AI typing */
+  .ai-pop{position:absolute;inset:0;background:rgba(22,20,15,.6);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:20;transition:opacity .4s;}
+  .ai-pop.hide{opacity:0;pointer-events:none;}
+  .ai-box{background:var(--panel);border-radius:14px;padding:22px;width:74%;box-shadow:0 20px 50px rgba(0,0,0,.4);}
+  .ai-box .ttl{font-family:'Fraunces',serif;font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+  .ai-box .input{background:var(--paper);border:1.5px solid var(--accent);border-radius:8px;padding:12px 14px;font-size:13px;min-height:52px;color:var(--ink);}
+  .ai-box .input .cursor{display:inline-block;width:2px;height:15px;background:var(--accent);margin-left:1px;vertical-align:middle;animation:blink .7s infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .ai-box .go{margin-top:12px;background:var(--accent);color:#fff;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;}
+
+  /* cursor pointer animasi */
+  .cursor-dot{position:absolute;width:18px;height:18px;z-index:30;pointer-events:none;transition:left .6s cubic-bezier(.4,0,.2,1),top .6s cubic-bezier(.4,0,.2,1);font-size:18px;}
+
+  .replay{display:block;margin:18px auto 0;background:var(--accent);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;}
+  .replay:hover{background:var(--accent);opacity:.9;}
+</style>
+</head>
+<body>
+<div class="demo-frame">
+  <div class="demo-cap">
+    <h2>✨ Lihat Cara Kerjanya</h2>
+    <p>Dari ide jadi website, dalam hitungan detik</p>
+  </div>
+
+  <div class="browser">
+    <div class="bar"><span></span><span></span><span></span><div class="url">blokbuild-pro.html</div></div>
+    <div class="app">
+      <div class="panel l">
+        <div class="pi g">Layout</div>
+        <div class="pi">Hero</div>
+        <div class="pi">Fitur</div>
+        <div class="pi">Galeri</div>
+        <div class="pi g">Konten</div>
+        <div class="pi">Teks</div>
+        <div class="pi">Tombol</div>
+      </div>
+      <div class="canvas" id="canvas">
+        <div class="blk b-hero" id="blk1"><h3 id="heroTitle">Kopi Senja</h3><p>Kopi premium, suasana cozy</p><span class="btn">Pesan Sekarang</span></div>
+        <div class="blk b-feat" id="blk2"><div class="c"><div class="e">☕</div><div class="l"></div><div class="l2"></div></div><div class="c"><div class="e">🍰</div><div class="l"></div><div class="l2"></div></div><div class="c"><div class="e">📶</div><div class="l"></div><div class="l2"></div></div></div>
+        <div class="blk b-gal" id="blk3"><div class="g"></div><div class="g"></div><div class="g"></div></div>
+        <div class="blk b-cta" id="blk4"><div class="h"></div><span class="btn">Kunjungi Kami</span></div>
+        <div class="blk b-foot" id="blk5"><div class="l"></div></div>
+      </div>
+      <div class="panel r">
+        <div class="pi g" style="background:none;color:var(--muted);">Properti</div>
+        <div class="field-mini"></div>
+        <div class="field-mini"></div>
+        <div class="field-mini"></div>
+        <div class="field-mini" style="background:var(--accent-soft);"></div>
+      </div>
+
+      <!-- AI popup -->
+      <div class="ai-pop" id="aiPop">
+        <div class="ai-box">
+          <div class="ttl">✨ AI Generate</div>
+          <div class="input"><span id="typed"></span><span class="cursor"></span></div>
+          <div class="go">Buat Sekarang</div>
+        </div>
+      </div>
+      <!-- cursor -->
+      <div class="cursor-dot" id="cur" style="left:50%;top:50%;">👆</div>
+    </div>
+  </div>
+
+  <button class="replay" onclick="play()">▶ Putar Ulang Demo</button>
+</div>
+
+<script>
+const PROMPT="buat landing page cafe Kopi Senja yang jual kopi premium";
+const blks=['blk1','blk2','blk3','blk4','blk5'];
+let timers=[];
+function clearT(){timers.forEach(t=>clearTimeout(t));timers=[];}
+function at(ms,fn){timers.push(setTimeout(fn,ms));}
+
+function reset(){
+  clearT();
+  document.getElementById('aiPop').classList.remove('hide');
+  document.getElementById('typed').textContent='';
+  blks.forEach(id=>document.getElementById(id).classList.remove('show'));
+  const cur=document.getElementById('cur');cur.style.left='50%';cur.style.top='50%';cur.style.opacity='1';
+}
+
+function play(){
+  reset();
+  // 1) ketik prompt
+  let i=0;
+  function type(){
+    if(i<=PROMPT.length){
+      document.getElementById('typed').textContent=PROMPT.slice(0,i);
+      i++;
+      timers.push(setTimeout(type,28));
+    }else{
+      // 2) gerakkan cursor ke tombol "Buat Sekarang"
+      at(500,()=>{const c=document.getElementById('cur');c.style.left='62%';c.style.top='62%';});
+      // 3) sembunyikan AI popup
+      at(1300,()=>{document.getElementById('aiPop').classList.add('hide');document.getElementById('cur').style.opacity='0';});
+      // 4) blok muncul satu per satu
+      blks.forEach((id,idx)=>{at(1500+idx*300,()=>document.getElementById(id).classList.add('show'));});
+    }
+  }
+  at(700,type);
+}
+play();
+</script>
+</body>
+</html>

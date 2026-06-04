@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlokBuild — Generator Kunci Lisensi</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#16140f;--paper:#faf6ee;--panel:#fffdf8;--accent:#d4622a;--accent-dk:#a8431a;--accent-soft:#fbe9dd;--line:#e6ddcd;--muted:#8a8170;--ok:#3c8c5c;--danger:#c0432f;--shadow:0 10px 40px -12px rgba(80,50,20,.22);--r:12px;--r-sm:8px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;padding:24px;font-size:14px;}
+  .wrap{max-width:760px;margin:0 auto;}
+  header{text-align:center;margin-bottom:24px;}
+  header .logo{font-family:'Fraunces',serif;font-weight:700;font-size:26px;display:inline-flex;align-items:center;gap:9px;}
+  header .logo .dot{width:13px;height:13px;background:var(--accent);border-radius:3px;transform:rotate(12deg);}
+  header p{color:var(--muted);margin-top:6px;font-size:13px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:18px;box-shadow:var(--shadow);}
+  .card h2{font-family:'Fraunces',serif;font-size:18px;margin-bottom:4px;}
+  .card .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:5px;font-weight:600;}
+  .field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;font-family:inherit;font-size:14px;background:var(--paper);outline:none;}
+  .field input:focus,.field textarea:focus{border-color:var(--accent);background:#fff;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .row .field{flex:1;min-width:160px;}
+  .btn{padding:11px 20px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--paper);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:.12s;}
+  .btn:hover{border-color:var(--accent);}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn.primary:hover{background:var(--accent-dk);}
+  .result{background:var(--ink);color:#e8e0d0;border-radius:var(--r-sm);padding:16px;font-family:'SF Mono',Menlo,monospace;font-size:13px;margin-top:14px;display:none;}
+  .result.show{display:block;}
+  .result .k{color:#f0c060;font-size:18px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+  .result .h{color:#8fd3a8;}
+  .result .lbl{color:#9a9486;font-size:11px;text-transform:uppercase;letter-spacing:.5px;margin-top:10px;}
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px;}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+  td.mono{font-family:'SF Mono',Menlo,monospace;font-size:12px;}
+  td .copy{cursor:pointer;color:var(--accent);font-size:11px;font-weight:600;}
+  .note{background:var(--accent-soft);border-left:3px solid var(--accent);padding:11px 14px;border-radius:6px;font-size:12.5px;line-height:1.55;color:#7a4220;margin-bottom:14px;}
+  .hashlist{background:var(--paper);border:1px dashed var(--line);border-radius:var(--r-sm);padding:14px;font-family:'SF Mono',Menlo,monospace;font-size:12px;margin-top:12px;word-break:break-all;line-height:1.7;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:99px;font-size:13px;z-index:200;transition:.3s;box-shadow:var(--shadow);}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><span class="dot"></span>Generator Kunci Lisensi</div>
+    <p>Buat & kelola kunci lisensi untuk BlokBuild Pro</p>
+  </header>
+
+  <div class="note">
+    Algoritma hash di tool ini <b>identik</b> dengan BlokBuild Pro. Kunci yang Anda buat di sini akan diterima aplikasi setelah hash-nya dimasukkan ke <code>VALID_HASHES</code>.
+  </div>
+
+  <!-- BUAT SATU KUNCI -->
+  <div class="card">
+    <h2>Buat Kunci untuk Pembeli</h2>
+    <div class="sub">Isi nama pembeli, sistem buat kunci unik + hash-nya.</div>
+    <div class="row">
+      <div class="field"><label>Nama / Kode Pembeli</label><input id="buyer" placeholder="contoh: Budi Santoso" oninput="genPreview()"></div>
+      <div class="field" style="max-width:150px;"><label>Prefix</label><input id="prefix" value="BLOK" maxlength="6" oninput="this.value=this.value.toUpperCase();genPreview()"></div>
+    </div>
+    <button class="btn primary" onclick="generateKey()">🔑 Buat Kunci Baru</button>
+    <button class="btn" onclick="addToBatch()">➕ Tambah ke Daftar</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- CEK KUNCI -->
+  <div class="card">
+    <h2>Cek / Hitung Hash Kunci</h2>
+    <div class="sub">Punya kunci sendiri? Hitung hash-nya di sini.</div>
+    <div class="field"><label>Kunci</label><input id="checkKey" placeholder="ketik kunci apa saja" oninput="checkHash()"></div>
+    <div class="result" id="checkResult"></div>
+  </div>
+
+  <!-- DAFTAR / BATCH -->
+  <div class="card">
+    <h2>Daftar Kunci Terbit</h2>
+    <div class="sub">Kumpulan kunci yang sudah Anda buat. Salin hash untuk dimasukkan ke aplikasi.</div>
+    <table id="batchTable"><thead><tr><th>Pembeli</th><th>Kunci</th><th>Hash</th><th></th></tr></thead><tbody id="batchBody"><tr><td colspan="4" style="color:var(--muted);text-align:center;padding:18px;">Belum ada kunci</td></tr></tbody></table>
+    <div id="hashBlock" style="display:none;">
+      <div class="field" style="margin-top:16px;"><label>Salin baris ini ke VALID_HASHES di BlokBuild-Pro.html</label></div>
+      <div class="hashlist" id="hashList"></div>
+      <button class="btn" style="margin-top:10px;" onclick="copyHashes()">📋 Salin Semua Hash</button>
+      <button class="btn" onclick="exportCSV()">📤 Export CSV</button>
+      <button class="btn" onclick="clearBatch()">🗑️ Kosongkan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ALGORITMA HASH — HARUS IDENTIK dengan BlokBuild Pro:
+   function _keyHash(k){let h=5381;for(...){h=((h*33)+k.charCodeAt(i))>>>0;}return h.toString(16);} */
+function keyHash(k){let h=5381;for(let i=0;i<k.length;i++){h=((h*33)+k.charCodeAt(i))>>>0;}return h.toString(16);}
+
+let batch=[];
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove('show'),2000);}
+
+function rndPart(n){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<n;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
+
+let lastKey='';
+function generateKey(){
+  const prefix=(document.getElementById('prefix').value||'BLOK').toUpperCase();
+  const key=prefix+'-'+rndPart(4)+'-'+rndPart(4);
+  lastKey=key;
+  const hash=keyHash(key);
+  const buyer=document.getElementById('buyer').value.trim()||'(tanpa nama)';
+  const r=document.getElementById('result');
+  r.className='result show';
+  r.innerHTML=`<div class="k">${key}</div><div class="lbl">Hash (untuk VALID_HASHES)</div><div class="h">'${hash}'</div><div class="lbl">Pembeli</div>${buyer}`;
+}
+function genPreview(){/* placeholder agar input responsif */}
+
+function addToBatch(){
+  if(!lastKey){toast('Buat kunci dulu');return;}
+  const buyer=document.getElementById('buyer').value.trim()||'(tanpa nama)';
+  batch.push({buyer,key:lastKey,hash:keyHash(lastKey),date:new Date().toLocaleDateString('id-ID')});
+  lastKey='';
+  document.getElementById('result').className='result';
+  document.getElementById('buyer').value='';
+  renderBatch();toast('Kunci ditambahkan ke daftar');
+}
+
+function checkHash(){
+  const k=document.getElementById('checkKey').value;
+  const r=document.getElementById('checkResult');
+  if(!k){r.className='result';return;}
+  r.className='result show';
+  r.innerHTML=`<div class="lbl">Kunci</div><div class="k" style="font-size:15px;">${k}</div><div class="lbl">Hash</div><div class="h">'${keyHash(k)}'</div>`;
+}
+
+function renderBatch(){
+  const body=document.getElementById('batchBody');
+  if(!batch.length){body.innerHTML='<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:18px;">Belum ada kunci</td></tr>';document.getElementById('hashBlock').style.display='none';return;}
+  body.innerHTML=batch.map((b,i)=>`<tr><td>${b.buyer}</td><td class="mono">${b.key}</td><td class="mono">${b.hash}</td><td><span class="copy" onclick="copyOne(${i})">salin kunci</span></td></tr>`).join('');
+  document.getElementById('hashBlock').style.display='block';
+  document.getElementById('hashList').textContent="const VALID_HASHES=["+batch.map(b=>"'"+b.hash+"'").join(',')+"];";
+}
+function copyOne(i){navigator.clipboard.writeText(batch[i].key).then(()=>toast('Kunci disalin')).catch(()=>toast('Gagal salin'));}
+function copyHashes(){const t=document.getElementById('hashList').textContent;navigator.clipboard.writeText(t).then(()=>toast('Hash disalin!')).catch(()=>toast('Gagal salin'));}
+function clearBatch(){if(!confirm('Kosongkan semua kunci di daftar?'))return;batch=[];renderBatch();}
+function exportCSV(){
+  const rows=[['Pembeli','Kunci','Hash','Tanggal'],...batch.map(b=>[b.buyer,b.key,b.hash,b.date])];
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kunci-lisensi-blokbuild.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);toast('CSV diunduh');
+}
+</script>
+</body>
+</html>
