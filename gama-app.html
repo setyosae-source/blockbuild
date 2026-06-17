@@ -7528,7 +7528,7 @@ async function printSavedDocument(id){
 }
 function openPrintWindow(doc){
   const title = doc.doc_type === 'quotation' ? 'PENAWARAN HARGA' : 'BUKTI PEMBELIAN';
-  const baseHref = new URL('.', window.location.href).href;
+  const logoSrc = document.querySelector('.brand img')?.src || '';
   const terms = doc.doc_type === 'quotation' ? `
     <div class="terms">
       <b>Ketentuan:</b>
@@ -7555,7 +7555,7 @@ function openPrintWindow(doc){
       .notes,.terms{margin-top:16px;font-size:13px;line-height:1.5}.sign{display:flex;justify-content:flex-end;margin-top:48px}.sign div{text-align:center;width:250px}
       @media print{body{margin:18mm}.no-print{display:none}}
     </style></head><body>
-    <div class="head"><div><img class="logo" src="${baseHref}assets/gama-listrik-logo.png"><div class="company">Solusinya Panel Listrik</div></div><div style="text-align:right"><h1>${title}</h1><div class="meta">No: <b>${escapeHtml(doc.doc_no)}</b><br>Tanggal: ${escapeHtml(doc.doc_date || '')}</div></div></div>
+    <div class="head"><div><img class="logo" src="${logoSrc}" alt="Gama Listrik"><div class="company">Solusinya Panel Listrik</div></div><div style="text-align:right"><h1>${title}</h1><div class="meta">No: <b>${escapeHtml(doc.doc_no)}</b><br>Tanggal: ${escapeHtml(doc.doc_date || '')}</div></div></div>
     <div class="box"><div><b>Kepada:</b><br>${escapeHtml(doc.customer_name || '')}</div><div><b>Status:</b><br>${escapeHtml(doc.status || 'draft')}</div></div>
     <p>${escapeHtml(doc.notes || 'Berikut adalah rincian barang.')}</p>
     <table><thead><tr><th>No</th><th>Deskripsi Barang/Layanan</th><th>Qty</th><th>Satuan</th><th>Harga Satuan</th><th>Jumlah</th></tr></thead><tbody>${rows}</tbody></table>
