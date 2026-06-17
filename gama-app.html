@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gama Listrik - Penjualan & Penawaran</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="seed-data.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/gama-listrik-logo.png" alt="Gama Listrik">
+      <div>
+        <h1>Gama Listrik</h1>
+        <p>Aplikasi Penjualan, Bukti Pembelian & Penawaran</p>
+      </div>
+    </div>
+    <div class="connection">
+      <span id="connectionStatus" class="pill danger">Belum connect</span>
+      <button class="btn ghost" data-tab="setup">Setup Supabase</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="dashboard">Dashboard</button>
+    <button class="tab" data-tab="products">Master Barang</button>
+    <button class="tab" data-tab="purchase">Bukti Pembelian</button>
+    <button class="tab" data-tab="quotation">Penawaran Harga</button>
+    <button class="tab" data-tab="history">Riwayat</button>
+    <button class="tab" data-tab="setup">Setup</button>
+  </nav>
+
+  <main>
+    <section id="dashboard" class="page active">
+      <div class="grid cards">
+        <div class="card"><span class="label">Master Barang</span><strong id="kpiProducts">0</strong><small>Harga terakhir tersimpan</small></div>
+        <div class="card"><span class="label">Dokumen</span><strong id="kpiDocs">0</strong><small>Bukti pembelian & penawaran</small></div>
+        <div class="card"><span class="label">Total Nilai</span><strong id="kpiValue">Rp0</strong><small>Dokumen tersimpan</small></div>
+      </div>
+      <div class="panel">
+        <h2>Alur kerja cepat</h2>
+        <ol class="steps">
+          <li>Jalankan <b>schema.sql</b> di Supabase SQL Editor.</li>
+          <li>Masukkan <b>Supabase URL</b> dan <b>Anon Key</b> di menu Setup.</li>
+          <li>Klik <b>Import Master Excel</b> untuk merekam data barang dari Excel.</li>
+          <li>Buat bukti pembelian / penawaran. Pilih barang, harga terakhir otomatis muncul.</li>
+        </ol>
+      </div>
+      <div class="panel">
+        <h2>Barang terbaru</h2>
+        <div id="latestProducts" class="mini-list"></div>
+      </div>
+    </section>
+
+    <section id="products" class="page">
+      <div class="toolbar">
+        <input id="productSearch" class="input" placeholder="Cari barang, contoh: Schneider, terminal, fan...">
+        <button id="btnRefreshProducts" class="btn">Refresh</button>
+        <button id="btnAddProduct" class="btn primary">Tambah Barang</button>
+      </div>
+      <div class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nama Barang</th><th>Satuan</th><th>Harga Terakhir</th><th>Tgl Harga</th><th>Sumber</th><th>Aksi</th></tr></thead>
+            <tbody id="productsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="purchase" class="page">
+      <div class="panel">
+        <h2>Buat Bukti Pembelian</h2>
+        <div class="form-grid">
+          <label>No. Dokumen<input id="purchaseNo" class="input"></label>
+          <label>Tanggal<input id="purchaseDate" type="date" class="input"></label>
+          <label>Kepada / Customer<input id="purchaseCustomer" class="input" value="PT. Sarana Andalan Elektrika"></label>
+          <label>Status
+            <select id="purchaseStatus" class="input"><option>draft</option><option>sent</option><option>paid</option><option>done</option></select>
+          </label>
+        </div>
+        <div class="doc-note">
+          <label>Catatan<textarea id="purchaseNotes" class="input" rows="2">Berikut adalah rincian barang yang dibeli.</textarea></label>
+        </div>
+        <div id="purchaseItems" class="items"></div>
+        <div class="doc-actions">
+          <button class="btn" onclick="addItemRow('purchase')">+ Tambah Item</button>
+          <div class="totals">
+            <label>Diskon <input id="purchaseDiscount" class="input money" type="number" value="0"></label>
+            <label>PPN / Pajak <input id="purchaseTax" class="input money" type="number" value="0"></label>
+            <strong>Total: <span id="purchaseTotal">Rp0</span></strong>
+          </div>
+        </div>
+        <div class="actions-right">
+          <button class="btn ghost" onclick="resetDocumentForm('purchase')">Reset</button>
+          <button class="btn" onclick="printCurrentDocument('purchase')">Preview / Print</button>
+          <button class="btn primary" onclick="saveDocument('purchase')">Simpan ke Supabase</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="quotation" class="page">
+      <div class="panel">
+        <h2>Buat Penawaran Harga</h2>
+        <div class="form-grid">
+          <label>No. Penawaran<input id="quotationNo" class="input"></label>
+          <label>Tanggal<input id="quotationDate" type="date" class="input"></label>
+          <label>Kepada / Customer<input id="quotationCustomer" class="input" value="PT. Sarana Andalan Elektrika"></label>
+          <label>Status
+            <select id="quotationStatus" class="input"><option>draft</option><option>sent</option><option>approved</option><option>rejected</option></select>
+          </label>
+          <label>Lead Time<input id="quotationLeadTime" class="input" value="7 - 14 hari setelah pembayaran diterima"></label>
+          <label>Validitas Harga<input id="quotationValidity" class="input" value="7 hari"></label>
+          <label>Term Pembayaran<input id="quotationPayment" class="input" value="100% sebelum proses order/import"></label>
+        </div>
+        <div class="doc-note">
+          <label>Catatan<textarea id="quotationNotes" class="input" rows="3">Barang import/indent dari China. Harga belum termasuk PPN apabila diperlukan faktur pajak.</textarea></label>
+        </div>
+        <div id="quotationItems" class="items"></div>
+        <div class="doc-actions">
+          <button class="btn" onclick="addItemRow('quotation')">+ Tambah Item</button>
+          <div class="totals">
+            <label>Diskon <input id="quotationDiscount" class="input money" type="number" value="0"></label>
+            <label>PPN / Pajak <input id="quotationTax" class="input money" type="number" value="0"></label>
+            <strong>Total: <span id="quotationTotal">Rp0</span></strong>
+          </div>
+        </div>
+        <div class="actions-right">
+          <button class="btn ghost" onclick="resetDocumentForm('quotation')">Reset</button>
+          <button class="btn" onclick="printCurrentDocument('quotation')">Preview / Print</button>
+          <button class="btn primary" onclick="saveDocument('quotation')">Simpan ke Supabase</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="history" class="page">
+      <div class="toolbar">
+        <select id="historyType" class="input small"><option value="">Semua</option><option value="purchase">Bukti Pembelian</option><option value="quotation">Penawaran</option></select>
+        <input id="historySearch" class="input" placeholder="Cari nomor/customer">
+        <button id="btnRefreshHistory" class="btn">Refresh Riwayat</button>
+      </div>
+      <div class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tanggal</th><th>Jenis</th><th>No.</th><th>Customer</th><th>Status</th><th>Total</th><th>Aksi</th></tr></thead>
+            <tbody id="historyTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="setup" class="page">
+      <div class="panel">
+        <h2>Setup Supabase</h2>
+        <p class="muted">Masukkan Project URL dan Anon Key. Data disimpan ke browser lokal agar tidak perlu input ulang.</p>
+        <div class="form-grid">
+          <label>Supabase Project URL<input id="supabaseUrl" class="input" placeholder="https://xxxxx.supabase.co"></label>
+          <label>Supabase Anon Key<input id="supabaseKey" class="input" placeholder="eyJhbGciOi..."></label>
+        </div>
+        <div class="actions-right">
+          <button id="btnSaveConfig" class="btn primary">Simpan & Connect</button>
+          <button id="btnImportSeed" class="btn">Import Master Excel ke Supabase</button>
+          <button id="btnClearConfig" class="btn ghost">Hapus Config</button>
+        </div>
+        <div class="info-box">
+          <b>Catatan keamanan:</b> jangan gunakan service_role key di file HTML. Gunakan anon key. Untuk versi online publik, ganti policy dev di <code>schema.sql</code> menjadi login per user.
+        </div>
+      </div>
+      <div class="panel">
+        <h2>SQL yang harus dijalankan</h2>
+        <p class="muted">Buka file <b>schema.sql</b> dari paket ZIP, copy semua isi, lalu paste di Supabase SQL Editor.</p>
+      </div>
+    </section>
+  </main>
+
+  <datalist id="productList"></datalist>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <h2 id="modalTitle">Tambah Barang</h2>
+      <div class="form-grid">
+        <label>Nama Barang<input id="modalProductName" class="input"></label>
+        <label>Satuan<input id="modalProductUnit" class="input" value="pcs"></label>
+        <label>Harga Terakhir<input id="modalProductPrice" class="input" type="number" value="0"></label>
+        <label>Tanggal Harga<input id="modalProductDate" class="input" type="date"></label>
+      </div>
+      <label>Catatan<textarea id="modalProductNotes" class="input" rows="3"></textarea></label>
+      <div class="actions-right">
+        <button class="btn ghost" onclick="closeModal()">Batal</button>
+        <button class="btn primary" onclick="saveProductFromModal()">Simpan Barang</button>
+      </div>
+    </div>
+  </div>
+
+  <template id="itemRowTemplate">
+    <div class="item-row">
+      <input class="input item-desc" list="productList" placeholder="Pilih / ketik barang">
+      <input class="input item-qty" type="number" min="0" step="0.001" value="1">
+      <input class="input item-unit" placeholder="pcs">
+      <input class="input item-price" type="number" min="0" step="1" value="0">
+      <input class="input item-amount" readonly value="Rp0">
+      <button class="btn danger small-btn item-remove">×</button>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
