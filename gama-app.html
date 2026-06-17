@@ -77,6 +77,7 @@ td.num{text-align:right;white-space:nowrap}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20}
 .modal.hidden{display:none}
 .modal-content{background:#fff;border-radius:18px;padding:22px;max-width:820px;width:100%;position:relative;box-shadow:0 20px 80px rgba(0,0,0,.18)}
+.modal-content.wide{max-width:1120px;max-height:92vh;overflow:auto}
 .modal-close{position:absolute;right:16px;top:14px;border:0;background:transparent;font-size:28px;cursor:pointer;color:var(--muted)}
 code{background:#eef2f7;padding:2px 5px;border-radius:5px}
 @media (max-width:850px){
@@ -7027,6 +7028,41 @@ window.GAMA_SEED_DATA = {
     </div>
   </div>
 
+  <div id="editDocModal" class="modal hidden">
+    <div class="modal-content wide">
+      <button class="modal-close" onclick="closeEditDocModal()">×</button>
+      <h2 id="editDocTitle">Edit Dokumen</h2>
+      <p class="muted" style="margin-top:-6px">Perubahan disimpan ke dokumen yang sama, bukan membuat dokumen baru.</p>
+      <input id="editDocType" type="hidden" value="purchase">
+      <div class="form-grid">
+        <label>No. Dokumen<input id="editDocNo" class="input"></label>
+        <label>Tanggal<input id="editDocDate" type="date" class="input"></label>
+        <label>Kepada / Customer<input id="editDocCustomer" class="input"></label>
+        <label>Status<input id="editDocStatus" class="input" placeholder="draft / sent / paid / done"></label>
+        <label class="edit-quotation-field">Lead Time<input id="editDocLeadTime" class="input"></label>
+        <label class="edit-quotation-field">Validitas Harga<input id="editDocValidity" class="input"></label>
+        <label class="edit-quotation-field">Term Pembayaran<input id="editDocPayment" class="input"></label>
+      </div>
+      <div class="doc-note">
+        <label>Catatan<textarea id="editDocNotes" class="input" rows="3"></textarea></label>
+      </div>
+      <div id="editDocItems" class="items"></div>
+      <div class="doc-actions">
+        <button class="btn" onclick="addItemRow('editDoc')">+ Tambah Item</button>
+        <div class="totals">
+          <label>Diskon <input id="editDocDiscount" class="input money" type="number" value="0"></label>
+          <label>PPN / Pajak <input id="editDocTax" class="input money" type="number" value="0"></label>
+          <strong>Total: <span id="editDocTotal">Rp0</span></strong>
+        </div>
+      </div>
+      <div class="actions-right">
+        <button class="btn ghost" onclick="closeEditDocModal()">Batal</button>
+        <button class="btn" onclick="printEditDocument()">Preview / Print</button>
+        <button class="btn primary" onclick="saveEditedDocument()">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+
   <template id="itemRowTemplate">
     <div class="item-row">
       <input class="input item-desc" list="productList" placeholder="Pilih / ketik barang">
@@ -7045,6 +7081,8 @@ let products = [];
 let customers = [];
 let documents = [];
 let editProductId = null;
+let editDocId = null;
+let editDocType = 'purchase';
 
 const rupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
 const shortDate = new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium' });
@@ -7344,7 +7382,7 @@ function recalcDocument(type){
   const tax = moneyNumber($(type+'Tax').value);
   $(type+'Total').textContent = rupiah.format(subtotal - discount + tax);
 }
-['purchase','quotation'].forEach(type => {
+['purchase','quotation','editDoc'].forEach(type => {
   document.addEventListener('input', e => {
     if(e.target && (e.target.id === type+'Discount' || e.target.id === type+'Tax')) recalcDocument(type);
   });
@@ -7535,9 +7573,14 @@ async function printSavedDocument(id){
 }
 
 async function editSavedDocument(id){
+  return openEditDocumentModal(id);
+}
+
+async function openEditDocumentModal(id){
   const doc = documents.find(d => String(d.id) === String(id));
   if(!doc) return toast('Dokumen tidak ditemukan. Klik Refresh Riwayat lalu coba lagi.');
-  const type = doc.doc_type === 'quotation' ? 'quotation' : 'purchase';
+  editDocId = id;
+  editDocType = doc.doc_type === 'quotation' ? 'quotation' : 'purchase';
   let items = [];
   if(sb){
     const { data, error } = await sb.from('document_items').select('*').eq('document_id', id).order('sort_order');
@@ -7547,25 +7590,118 @@ async function editSavedDocument(id){
     items = doc.items || [];
   }
 
-  $(type+'No').value = doc.doc_no || '';
-  $(type+'Date').value = doc.doc_date || today();
-  $(type+'Customer').value = doc.customer_name || '';
-  $(type+'Status').value = doc.status || 'draft';
-  $(type+'Notes').value = doc.notes || '';
-  $(type+'Discount').value = doc.discount || 0;
-  $(type+'Tax').value = doc.tax || 0;
+  $('editDocType').value = editDocType;
+  $('editDocTitle').textContent = editDocType === 'quotation' ? 'Edit Penawaran Harga' : 'Edit Bukti Penjualan';
+  $('editDocNo').value = doc.doc_no || '';
+  $('editDocDate').value = doc.doc_date || today();
+  $('editDocCustomer').value = doc.customer_name || '';
+  $('editDocStatus').value = doc.status || 'draft';
+  $('editDocNotes').value = doc.notes || '';
+  $('editDocDiscount').value = doc.discount || 0;
+  $('editDocTax').value = doc.tax || 0;
+  $('editDocLeadTime').value = doc.lead_time || '7 - 14 hari setelah pembayaran diterima';
+  $('editDocValidity').value = doc.validity || '7 hari';
+  $('editDocPayment').value = doc.payment_terms || '100% sebelum proses order/import';
 
-  if(type === 'quotation'){
-    $('quotationLeadTime').value = doc.lead_time || '7 - 14 hari setelah pembayaran diterima';
-    $('quotationValidity').value = doc.validity || '7 hari';
-    $('quotationPayment').value = doc.payment_terms || '100% sebelum proses order/import';
+  document.querySelectorAll('.edit-quotation-field').forEach(el => {
+    el.style.display = editDocType === 'quotation' ? 'block' : 'none';
+  });
+
+  $('editDocItems').innerHTML = '';
+  (items.length ? items : [{}]).forEach(it => addItemRow('editDoc', it));
+  recalcDocument('editDoc');
+  $('editDocModal').classList.remove('hidden');
+}
+function closeEditDocModal(){
+  $('editDocModal').classList.add('hidden');
+  editDocId = null;
+}
+function getEditedDocumentData(){
+  const type = editDocType || $('editDocType').value || 'purchase';
+  const items = getItems('editDoc');
+  const subtotal = items.reduce((a,x)=> a+x.amount,0);
+  const discount = moneyNumber($('editDocDiscount').value);
+  const tax = moneyNumber($('editDocTax').value);
+  return {
+    doc_type: type,
+    doc_no: $('editDocNo').value.trim(),
+    doc_date: $('editDocDate').value || today(),
+    customer_name: $('editDocCustomer').value.trim() || 'Customer',
+    status: $('editDocStatus').value.trim() || 'draft',
+    notes: $('editDocNotes').value,
+    lead_time: type === 'quotation' ? $('editDocLeadTime').value : '',
+    validity: type === 'quotation' ? $('editDocValidity').value : '',
+    payment_terms: type === 'quotation' ? $('editDocPayment').value : '',
+    subtotal, discount, tax, total: subtotal - discount + tax,
+    source_sheet: 'app',
+    items
+  };
+}
+function printEditDocument(){
+  const data = getEditedDocumentData();
+  if(data.items.length === 0) return toast('Minimal isi 1 item untuk print.');
+  openPrintWindow(data);
+}
+async function saveEditedDocument(){
+  if(!editDocId) return toast('Tidak ada dokumen yang sedang diedit.');
+  const base = getEditedDocumentData();
+  if(!base.doc_no) return toast('No dokumen wajib diisi.');
+  if(base.items.length === 0) return toast('Minimal isi 1 item.');
+
+  if(!sb){
+    const idx = documents.findIndex(d => String(d.id) === String(editDocId));
+    if(idx >= 0){
+      documents[idx] = {...documents[idx], ...base, items:base.items};
+      base.items.forEach(updateLocalProductPrice.bind(null, base.doc_date, base.doc_no));
+    }
+    closeEditDocModal();
+    renderAll();
+    return toast('Dokumen lokal berhasil diperbarui.');
   }
 
-  $(type+'Items').innerHTML = '';
-  (items.length ? items : [{}]).forEach(it => addItemRow(type, it));
-  recalcDocument(type);
-  showTab(type);
-  toast('Dokumen sudah dibuka untuk diedit. Setelah revisi, klik Simpan ke Supabase.');
+  try{
+    const cust = await upsertCustomerByName(base.customer_name);
+    const docPayload = {...base, customer_id:cust?.id || null};
+    delete docPayload.items;
+
+    const { error: docErr } = await sb.from('documents').update(docPayload).eq('id', editDocId);
+    if(docErr) throw docErr;
+
+    const productPayload = base.items.map(it => ({
+      name: it.description,
+      unit: it.unit,
+      last_price: it.unit_price,
+      last_price_date: base.doc_date,
+      last_doc_no: base.doc_no,
+      source_sheet: 'app',
+      is_active: true
+    }));
+    const { data: upProducts, error: prodErr } = await sb.from('products').upsert(productPayload, { onConflict:'name' }).select();
+    if(prodErr) throw prodErr;
+    const productByName = Object.fromEntries((upProducts || []).map(p => [String(p.name).toLowerCase(), p]));
+
+    const delItems = await sb.from('document_items').delete().eq('document_id', editDocId);
+    if(delItems.error) throw delItems.error;
+    const itemPayload = base.items.map(it => ({
+      document_id: editDocId,
+      product_id: productByName[String(it.description).toLowerCase()]?.id || null,
+      sort_order: it.sort_order,
+      description: it.description,
+      qty: it.qty,
+      unit: it.unit,
+      unit_price: it.unit_price,
+      amount: it.amount
+    }));
+    const { error: itemErr } = await sb.from('document_items').insert(itemPayload);
+    if(itemErr) throw itemErr;
+
+    await loadAll();
+    closeEditDocModal();
+    toast('Dokumen berhasil diperbarui, tidak membuat duplikat.');
+  }catch(err){
+    console.error(err);
+    toast('Gagal update dokumen: ' + err.message);
+  }
 }
 
 async function deleteSavedDocument(id){
@@ -7640,6 +7776,10 @@ window.saveDocument = saveDocument;
 window.printCurrentDocument = printCurrentDocument;
 window.printSavedDocument = printSavedDocument;
 window.editSavedDocument = editSavedDocument;
+window.openEditDocumentModal = openEditDocumentModal;
+window.closeEditDocModal = closeEditDocModal;
+window.saveEditedDocument = saveEditedDocument;
+window.printEditDocument = printEditDocument;
 window.deleteSavedDocument = deleteSavedDocument;
 window.openProductModal = openProductModal;
 window.closeModal = closeModal;
